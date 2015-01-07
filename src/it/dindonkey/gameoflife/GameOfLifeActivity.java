@@ -86,45 +86,45 @@ public class GameOfLifeActivity extends Activity
             }
         });
 
-        patternSpinner = (Spinner) findViewById(R.id.patternSpinner);
-        GolPattern[] patterns = new GolPattern[] {
-                new GolPattern("Blank (15x15)", new int[15][15]),
-                new GolPattern("Pulsar",new int[][]{
-                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-                })
-        };
-        ArrayAdapter<GolPattern> adapter = new ArrayAdapter<GolPattern>(this,android.R.layout.simple_spinner_item,patterns);
-        patternSpinner.setAdapter(adapter);
-        patternSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-        {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-            {
-                GolPattern itemSelected = (GolPattern)parent.getItemAtPosition(position);
-                worldView.world.currentGeneration = itemSelected.matrix;
-                worldView.invalidate();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent)
-            {
-
-            }
-        });
+//        patternSpinner = (Spinner) findViewById(R.id.patternSpinner);
+//        GolPattern[] patterns = new GolPattern[] {
+//                new GolPattern("Blank (15x15)", new int[15][15]),
+//                new GolPattern("Pulsar",new int[][]{
+//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
+//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
+//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
+//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
+//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+//                })
+//        };
+//        ArrayAdapter<GolPattern> adapter = new ArrayAdapter<GolPattern>(this,android.R.layout.simple_spinner_item,patterns);
+//        patternSpinner.setAdapter(adapter);
+//        patternSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
+//        {
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
+//            {
+//                GolPattern itemSelected = (GolPattern)parent.getItemAtPosition(position);
+//                worldView.world.currentGeneration = itemSelected.matrix;
+//                worldView.invalidate();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent)
+//            {
+//
+//            }
+//        });
 
     }
 
