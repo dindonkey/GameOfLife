@@ -1,14 +1,15 @@
 package it.dindonkey.gameoflife;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Spinner;
+import android.widget.EditText;
+import android.widget.Toast;
 
-import java.util.List;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class GameOfLifeActivity extends Activity
 {
@@ -17,8 +18,8 @@ public class GameOfLifeActivity extends Activity
     private Button nextStepButton;
     private Button playButton;
     private Thread playThread;
-    private boolean shouldContinue;
-    private Spinner patternSpinner;
+    private boolean isPlaying;
+    private EditText numCellsEditText;
 
     /**
      * Called when the activity is first created.
@@ -30,7 +31,7 @@ public class GameOfLifeActivity extends Activity
         setContentView(R.layout.main);
 
         worldView = ((WorldView) findViewById(R.id.world));
-        worldView.init(15, 15);
+        worldView.init(30, 30);
 
         nextStepButton = ((Button) findViewById(R.id.stepButton));
         nextStepButton.setOnClickListener(new View.OnClickListener()
@@ -48,26 +49,26 @@ public class GameOfLifeActivity extends Activity
             @Override
             public void onClick(View v)
             {
-                if(getString(R.string.play).equals(playButton.getText()))
+                if(!isPlaying)
                 {
                     playButton.setText(getString(R.string.stop));
                     nextStepButton.setEnabled(false);
-                    shouldContinue = true;
+                    isPlaying = true;
                     playThread = new Thread(){
                         @Override
                         public void run()
                         {
-                            while(shouldContinue)
+                            while(isPlaying)
                             {
 
                                 try
                                 {
                                     worldView.world.evolveToNextGeneration();
                                     worldView.postInvalidate();
-                                    Thread.sleep(200);
+                                    Thread.sleep(50);
                                 }catch (InterruptedException e)
                                 {
-                                    shouldContinue = false;
+                                    isPlaying = false;
                                 }
 
 
@@ -80,51 +81,50 @@ public class GameOfLifeActivity extends Activity
                 {
                     playButton.setText(getString(R.string.play));
                     nextStepButton.setEnabled(true);
-                    shouldContinue = false;
+                    isPlaying = false;
 
                 }
             }
         });
 
-//        patternSpinner = (Spinner) findViewById(R.id.patternSpinner);
-//        GolPattern[] patterns = new GolPattern[] {
-//                new GolPattern("Blank (15x15)", new int[15][15]),
-//                new GolPattern("Pulsar",new int[][]{
-//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,1,0,0,0,0,1,0,1,0,0,0,0,1,0},
-//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//                        {0,0,0,1,1,1,0,0,0,1,1,1,0,0,0},
-//                        {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-//                })
-//        };
-//        ArrayAdapter<GolPattern> adapter = new ArrayAdapter<GolPattern>(this,android.R.layout.simple_spinner_item,patterns);
-//        patternSpinner.setAdapter(adapter);
-//        patternSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener()
-//        {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id)
-//            {
-//                GolPattern itemSelected = (GolPattern)parent.getItemAtPosition(position);
-//                worldView.world.currentGeneration = itemSelected.matrix;
-//                worldView.invalidate();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent)
-//            {
-//
-//            }
-//        });
+        findViewById(R.id.pickAPatternButton).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                Intent intent = new Intent(GameOfLifeActivity.this, LifChooserActivity.class);
+                startActivityForResult(intent, 1);
+            }
+        });
+
+        numCellsEditText = (EditText) findViewById(R.id.numCellEditText);
+        findViewById(R.id.resetGridButton).setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                worldView.init(Integer.parseInt(numCellsEditText.getText().toString()),Integer.parseInt(numCellsEditText.getText().toString()));
+                worldView.invalidate();
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (data == null) {return;}
+        String fileName = data.getStringExtra("fileName");
+        try
+        {
+            LIFFile lifFile = LIFFileReader.fromFile(new InputStreamReader(getAssets().open("gol_patterns/" + fileName)));
+            worldView.init(Math.max(lifFile.cols,lifFile.rows), Math.max(lifFile.cols,lifFile.rows));
+            worldView.world.drawLifePattern(lifFile.patterns);
+            worldView.invalidate();
+        } catch (IOException e)
+        {
+            Toast.makeText(GameOfLifeActivity.this,"File " + fileName + " not found!",Toast.LENGTH_SHORT).show();
+        }
 
     }
 

@@ -2,12 +2,14 @@ package it.dindonkey.gameoflife;
 
 import org.junit.Test;
 
+import java.io.FileReader;
+
 import static org.junit.Assert.assertEquals;
 
 /**
  * Remind: #N = #R 23/3
  */
-public class LifeReaderTest
+public class LIFFileReaderTest
 {
     @Test
     public void readLifFromFile() throws Exception
@@ -52,7 +54,11 @@ public class LifeReaderTest
                 "**\n" +
                 "**\n";
 
-        assertEquals(expected,LifePatternReader.fromFile(System.getProperty("user.dir") + "/assets/gol_patterns/GUN46.LIF"));
+        LIFFile lifFile = LIFFileReader.fromFile(new FileReader(System.getProperty("user.dir") + "/assets/gol_patterns/GUN46.LIF"));
+        assertEquals("p46 glider gun",lifFile.name);
+        assertEquals(72,lifFile.cols);
+        assertEquals(34, lifFile.rows);
+        assertEquals(expected, lifFile.patterns);
     }
 
 
